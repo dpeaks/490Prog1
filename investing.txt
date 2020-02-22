@@ -22,3 +22,5 @@ since taxes are paid later, this would be better if you were in a higher tax bra
 withdraw has 10% pen and pay taxes
 forced to withdraw at 71.5
 uncertain future tax rates
+
+2/22/2020
