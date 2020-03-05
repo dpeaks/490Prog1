@@ -99,7 +99,7 @@ public class program1 {
                     //retrieving first thing in the list 
                     int value = list.removeFirst();
                     
-                    System.out.println("Consumer 1 finished Process: " + value);
+                    System.out.println("\tConsumer 1 finished Process: " + value);
                     
                     //waking up producer thread 
                     notify();

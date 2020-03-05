@@ -1,106 +1,85 @@
 package program1;
 
-//import com.sun.org.apache.bcel.internal.classfile.Utility;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-/**
- * Consumes tasks and allows them to execute.
- * Requests nodes from the process queue, simulates execution for each process,
- * reports stats on the process and its task, etc.
+/*
+ * Class consumerThread: 
+ * consumes tasks and allows them to execute; requests nodes from the heap and simulates their execution 
+ * also reports statistics on the process 
  */
 public class consumerThread implements Runnable {
-	/**
-	 * The maximum number of nodes to produce.
-	 */
-	private final int MAX_NUM_OF_NODES_TO_PRODUCE = 75;
-	/**
-	 * The time to wait in idle.
-	 */
-	private final int IDLE_TIME_IN_MILLISECONDS = 66;
-	/**
-	 * The counter for the amount of nodes created.
-	 */
-	private int nodeCount;
-	/**
-	 * The counter for the amount of times producer thread has awoken.
-	 */
-	private int wakeUpCount;
-	/**
-	 * The queue for the processes to produce to.
-	 */
-	private minHeap minHeap;
-
-	/**
-	 * Communicates the flags between producer and consumer threads.
-	 */
-	private ThreadFlags flags;
-	/**
-	 * The id of the previous consumer thread.
-	 */
-	private static int lastId = 0;
-	/**
-	 * The time in milliseconds to wait while idling.
-	 */
-	private final long IDLE_WAIT_IN_MILLISECONDS = 33;
-	/**
-	 * The queue of processes to run.
-	 */
-	private minHeap minHeap;
-	/**
-	 * The id of the consumer thread.
-	 */
-	private int id;
-	/**
-	 * True if the thread is to continue consuming.
-	 */
-	private boolean isRunning;
-
-	/**
-	 * A variable to improve time reporting information about the thread.
-	 */
-	private String tabsPrepend;
-
-	/**
-	 * The total number of nodes consumed by this consumer.
-	 */
+   
+        //sets the idle wait count in miliseconds
+	private final int idleWait = 66;
+	
+        //total number of nodes consumed by a particular consumer Thread
 	private int totalConsumed;
 
-	public consumerThread ( minHeap heap ) {
+        //the heap the producer produces nodes to
+	private minHeap minHeap;
+
+	//flags to help the producer and consumer threads communicate with each other
+	private ThreadFlags flags;
+
+        //consumerID of the previous consumer thread
+	private static int lastId = 0;
+	
+        //consumer thread's ID
+	private int consumerID;
+
+        //True if consumer thread is still able to continue consuming
+	private boolean isRunning;
+
+	//makes tabbing/formatting outputs easier
+	private String tabsPrepend;
+
+        //
+	public consumerThread (minHeap heap, ThreadFlags TF) {
+
 		this.minHeap = heap;
-		this.id = ++ lastId;
+		this.consumerID = ++ lastId;
+                this.flags = TF;
 		this.totalConsumed = 0;
 		this.isRunning = false;
 
+                //to make tabbing outputs easier
 		StringBuilder sb = new StringBuilder();
-		for ( int i = 0; i < this.id; i++ ) {
+		for ( int i = 0; i < this.consumerID; i++ ) {
 			sb.append( '\t' );
 		}
 
 		this.tabsPrepend = sb.toString();
-
-
 	}
 
-	/**
-	 * @return the id of the consumer thread.
-	 */
-	public int getId () {
-		return id;
+    //returns the consumerID of the current consumer thread
+    public int getConsumerID () {
+            return consumerID;
 	}
 
-	/**
-	 * @return the total number of nodes consumed by this consumer.
-	 */
-	public int getTotalConsumed () {
-		return totalConsumed;
+    //returns the total consumed nodes by the current consumer threads
+    public int getTotalConsumed () {
+            return totalConsumed;
+	}
+    
+            //function to handle reports on consumer thread statuses
+	private void report (String message) {
+		System.out.println( String.format("%sConsumer %d %s", this.tabsPrepend, this.getConsumerID(), message));
 	}
 
-	/**
-	 * Requests a node from {@link ProcessQueue} if there is one. If the queue is empty, waits.
-	 *
-	 * @return the requested node.
-	 */
+	//tells the consumer to wait for the specified idleWait time
+	private void idle () {
+		try {
+                        report( "is idling..." );
+			Thread.sleep(idleWait);
+
+			Thread.sleep(idleWait );
+		} catch ( InterruptedException e ) {
+			report( "was interrupted." );
+		}
+	}
+
+
+	//returns a node when the consumer requests them
 	public Node requestNode () {
 		report( "is requesting a new node." );
 
@@ -108,76 +87,59 @@ public class consumerThread implements Runnable {
 
 			report( "cannot find new node." );
 
-			if ( flags.getComplete() ) {
-				report("thinks there won't be any more nodes to request.");
-				this.isRunning = false;
-				return null;
-			} else {
-				idle();
-			}
-		}
-
+			if (flags.isProducerComplete()) {
+				report("thinks there aren't any nodes left on the heap.");
+                                this.isRunning = false; 
+                                return null; 
+                        }
+                        else
+                        {
+                            idle();
+                        }
+                }
 		try {
 			return this.minHeap.removeHead();
-		} catch ( InterruptedException e ) {
-			report( "was interrupted." );
+		} 
+                catch ( InterruptedException e ) 
+                {
+			report("was interrupted.");
 			return null;
 		}
 	}
-
-	/**
-	 * Reports the given message to the screen.
-	 *
-	 * @param message The message to send out to.
-	 */
-	private void report ( String message ) {
-		System.out.println( String.format( "%sConsumer %d %s", this.tabsPrepend, this.getId(), message ) );
-	}
-
-	/**
-	 * Waits for the given time in ms.
-	 */
-	private void idle () {
-		try {
-			report( "is idling..." );
-			Thread.sleep( IDLE_WAIT_IN_MILLISECONDS );
-		} catch ( InterruptedException e ) {
-			report( "was interrupted." );
-		}
-	}
-
+        
 	/**
 	 * Consumes the processes in the queue while there are some to get.
 	 */
 	@Override
 	public void run () {
-                DateTimeFormatter formatDate = DateTimeFormatter.ofPattern("MM/dd/yy hh:mm:ss");
+                //DateTimeFormatter formatDate = DateTimeFormatter.ofPattern("MM/dd/yy hh:mm:ss");
                 this.isRunning = true;
-		while ( this.isRunning ) {
+		while (this.isRunning) {
 			try {
 				Node nodeToProcess = this.requestNode();
 
-				if ( nodeToProcess == null ) {
+				if (nodeToProcess == null) {
 					continue;
 				}
-
 				nodeToProcess.run();
 
-				LocalDateTime finishedProcessingTime = java.time.LocalDateTime.now();
+				LocalDateTime finishedProcessingTime = CurrentTime.getCurrentTime();
 
 				String nodeStatistics = nodeToProcess.toString();
-
-				report( String.format( "finished %s at %s", nodeStatistics, Utility.formatDateTime( finishedProcessingTime ) ) );
-
+                                //Date dateFormat = new Date();
+                                //SimpleDateFormat sf = new SimpleDateFormat("hh:mm:ss a zzz"); 
+                                
+				report(String.format("finished %s at %s", nodeStatistics, TimeFormat.formatDateTime(finishedProcessingTime)));
 				this.totalConsumed++;
 
-			} catch ( InterruptedException ex ) {
-				report( "was interrupted." );
-			}
-		}
-
-		report( "is done." );
-		report( String.format( "consumed %d nodes.", this.totalConsumed ) );
-
-	}
+			} 
+                        catch ( InterruptedException ex ) 
+                        {
+                            report("process was interrupted");
+                        }
+                }
+               
+                report("is done."); 
+                report(String.format("consumed %d nodes.", this.totalConsumed));
+        }
 }
