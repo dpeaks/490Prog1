@@ -69,83 +69,101 @@ public class consumerThread implements Runnable {
             return consumedNodes;
         }
 
-    //function to handle reports on consumer thread statuses
+    /**
+     * Is the consumer running or not?
+     * @return true if consumer is running. False otherwise
+     */
+    public boolean getIsRunning(){
+        return this.isRunning;
+    }
+    
+    /**
+     * Set the consumer to running or not running.
+     * @param running true if the process is running, false otherwise.
+     */
+    public void setIsRunning(boolean running){
+        this.isRunning = running;
+    }
+    
+    /**
+     * Print data about a consumer and an additional message
+     * @param message additional info about consumer
+     */
     private void report (String message) {
             System.out.println(String.format("%sConsumer %d %s", this.tab, this.getConsumerID(), message));
     }
 
-    //tells the consumer to wait for the specified idleWait time
+    /**
+     * Make the consumer pause for a specified amount of time.
+     */
     private void idle () {
             try {
-                    report( "is idling..." );
-                    Thread.sleep(idleWait);
+                report( "is idling..." );
+                Thread.sleep(idleWait);
 
-                    Thread.sleep(idleWait );
             } catch ( InterruptedException e ) {
-                    report( "was interrupted." );
+                report( "was interrupted." );
             }
     }
 
 
-    //returns a node when the consumer requests them
-    public Node requestNode () {
-            report( "is requesting a new node." );
+    /**
+     * Grab another node from the heap if possible.
+     * @return the node at the top of the heap or null if there are no more nodes to grab.
+     */
+    public Node getNextNode () {
+        while ( this.minHeap.isEmpty() ) {
 
-            while ( this.minHeap.isEmpty() ) {
+                report( "cannot find new node." );
 
-                    report( "cannot find new node." );
-
-                    if (flags.isProducerComplete()) {
-                            report("thinks there aren't any nodes left on the heap.");
-                            this.isRunning = false; 
-                            return null; 
-                    }
-                    else
-                    {
-                        idle();
-                    }
-            }
-            try {
-                    return this.minHeap.removeHead();
-            } 
-            catch ( InterruptedException e ) 
-            {
-                    report("was interrupted.");
-                    return null;
-            }
+                if (flags.isProducerComplete()) {
+                    report("thinks there aren't any nodes left on the heap.");
+                    this.isRunning = false; 
+                    return null; 
+                }
+                else
+                {
+                    idle();
+                }
+        }
+        try {
+                return this.minHeap.removeHead();
+        }catch ( InterruptedException e ) 
+        {
+                report("was interrupted.");
+                return null;
+        }
     }
 
     /**
-     * Consumes the processes in the queue while there are some to get.
+     * Consume process and display information about the consumed process.
      */
     @Override
     public void run () {
-        
-            this.isRunning = true;
-            while (this.isRunning) {
-                    try {
-                            Node nodeToProcess = this.requestNode();
 
-                            if (nodeToProcess == null) {
-                                    continue;
-                            }
-                            nodeToProcess.run();
+        setIsRunning(true);
+        while (this.isRunning) {
+                try {
+                    Node nextNode = this.getNextNode();
 
-                            LocalDateTime finishedProcessingTime = Time.getCurrentTime();
-
-                            String nodeStatistics = nodeToProcess.toString();
-
-                            report(String.format("finished %s at %s", nodeStatistics, Time.formatDateTime(finishedProcessingTime)));
-                            this.consumedNodes++;
-
-                    } 
-                    catch ( InterruptedException ex ) 
-                    {
-                        report("process was interrupted");
+                    if (nextNode == null) {
+                            continue;
                     }
-            }
+                    nextNode.run();
 
-            report("is done."); 
-            report(String.format("consumed %d nodes.", this.consumedNodes));
+                    LocalDateTime finishedProcessingTime = Time.getCurrentTime();
+
+                    String nodeStatistics = nextNode.nodeReport();
+
+                    report(String.format("finished %s at %s", nodeStatistics, Time.formatDateTime(finishedProcessingTime)));
+                    this.consumedNodes++;
+
+                }catch ( InterruptedException ex ){
+                    report("process was interrupted");
+                }
+        }
+
+        report("is done."); 
+        report(String.format("consumed %d nodes.", this.consumedNodes));
     }
 }
