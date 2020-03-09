@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 /**
  * Class Node holds all the information about a process/node and executes them.
- * @author Dante
+ * @author Dante& Antoine
  */
 class Node implements Comparable {
     
@@ -121,8 +121,8 @@ class Node implements Comparable {
     
     /**
      * Compare the priority of two nodes in a heap.
-     * @param o 
-     * @return 
+     * @param o another node to compare the current node to
+     * @return negative if the result is false, positive if the result is true (two nodes have the same priority)
      */
     public int compareTo(Object o) {
        //@Override

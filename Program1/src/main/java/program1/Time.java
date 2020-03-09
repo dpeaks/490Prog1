@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * This class gets the time and formats it correctly.
- * @author Dante
+ * @author Dante & Antoine
  */
 class Time {
 

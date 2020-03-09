@@ -3,10 +3,10 @@ package program1;
 import java.time.LocalDateTime;
 
 /*
- * Class consumerThread consumes processes/nodes and allows them to execute.
- * @author Dante 
+ * Class ConsumerThread consumes processes/nodes and allows them to execute.
+ * @author Dante & Antoine
  */
-public class consumerThread implements Runnable {
+public class ConsumerThread implements Runnable {
 
     // amount of time to be idle
     private final int idleWait = 66;
@@ -18,7 +18,7 @@ public class consumerThread implements Runnable {
     private minHeap minHeap;
 
     // Signals if there are any more processes to consume
-    private ThreadFlags flags;
+    private ProducerFlag flags;
 
     //consumerID of the previous consumer thread
     private static int lastId = 0;
@@ -37,7 +37,7 @@ public class consumerThread implements Runnable {
      * @param heap the heap that the producer consumes from.
      * @param TF true if the producer is done producing. False otherwise
      */
-    public consumerThread (minHeap heap, ThreadFlags TF) {
+    public ConsumerThread (minHeap heap, ProducerFlag TF) {
 
             this.minHeap = heap;
             this.consumerID = ++ lastId;
@@ -98,7 +98,7 @@ public class consumerThread implements Runnable {
      */
     private void idle () {
             try {
-                report( "is idling..." );
+                report( "Idling..." );
                 Thread.sleep(idleWait);
 
             } catch ( InterruptedException e ) {
@@ -127,7 +127,7 @@ public class consumerThread implements Runnable {
                 }
         }
         try {
-                return this.minHeap.removeHead();
+                return this.minHeap.consumeHead();
         }catch ( InterruptedException e ) 
         {
                 report("was interrupted.");

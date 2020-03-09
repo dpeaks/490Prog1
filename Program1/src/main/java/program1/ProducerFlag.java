@@ -7,9 +7,9 @@ package program1;
 
 /**
  * This class will alert the consumer class if the producer is done producing processes. 
- * @author Dante
+ * @author Dante & Antoine
  */
-class ThreadFlags {
+class ProducerFlag {
   
         //boolean to set the producer as done with its tasks
         private boolean producerComplete; 
@@ -17,7 +17,7 @@ class ThreadFlags {
         /**
          * Constructor for this class. Set the producerComplete flag to false.
          */
-        public ThreadFlags() 
+        public ProducerFlag() 
         {
             this.producerComplete = false; 
         }

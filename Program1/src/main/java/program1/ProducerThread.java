@@ -1,10 +1,10 @@
 package program1;
 
 /*
- * Class producerThread produces nodes for the consumer threads to consume.
- * @author Dante
+ * Class ProducerThread produces nodes for the consumer threads to consume.
+ * @author Dante & Antoine
  */
-public class producerThread implements Runnable {
+public class ProducerThread implements Runnable {
 
     // the amount of time a process is rest
     private final long restTime = 33;
@@ -19,14 +19,14 @@ public class producerThread implements Runnable {
     private minHeap minHeap;
 
     // indicates wether or not all the processes have been produced.
-    private ThreadFlags flags;
+    private ProducerFlag flags;
 
     /**
      * Initialize process producer.
      * @param heap the heap that the producer will produce to.
      * @param TF is the producer done producing? (T/F)
      */
-    public producerThread (minHeap heap, ThreadFlags TF) 
+    public ProducerThread (minHeap heap, ProducerFlag TF) 
     {
         this.minHeap = heap;
         this.flags = TF;
@@ -129,10 +129,10 @@ public class producerThread implements Runnable {
         {
                 int nodesToAdd = getRandomNodes();
                 
-                // add the processes to the heap
+                // addNode the processes to the heap
                 for (int i = 0; i < nodesToAdd; i++) {
                         Node producedNode = createNode();
-                        this.minHeap.add( producedNode );
+                        this.minHeap.addNode( producedNode );
                 }
 
                 System.out.println(String.format("Producer has produced %d new nodes.", nodesToAdd));

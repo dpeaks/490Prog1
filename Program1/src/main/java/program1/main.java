@@ -1,15 +1,7 @@
-//NAMES: Adam McFry & Alexandra Noreiga
-//DATE: 3/9/20
-//CLASS: CS 490-01
-//PURPOSE: this program simulates synchronization of processes and threading in Java
-//         featuring the Producer/Consumer problem 
-
+// Antoine Lynch & Dant'e Peaks
 package program1;
 
-/*
-/Class main: 
-/initializes and runs the main functionality of the program
-*/
+
 public class main {
     public static void main(String[] args) { 
         
@@ -17,14 +9,14 @@ public class main {
         minHeap heap = new minHeap(75);
         
         //creating instance of flag watcher
-        ThreadFlags flags = new ThreadFlags(); 
+        ProducerFlag flags = new ProducerFlag(); 
         
         //creating consumer threads
-        consumerThread ct1 = new consumerThread(heap, flags);
-        consumerThread ct2 = new consumerThread(heap, flags);
+        ConsumerThread ct1 = new ConsumerThread(heap, flags);
+        ConsumerThread ct2 = new ConsumerThread(heap, flags);
         
         //creating producer threads
-        producerThread pt1 = new producerThread(heap, flags);
+        ProducerThread pt1 = new ProducerThread(heap, flags);
             
         //initialize consumer threads
         Thread consume1 = new Thread(ct1);
