@@ -6,10 +6,6 @@
 
 package program1;
 
-/*
-/Class main: 
-/initializes and runs the main functionality of the program
-*/
 public class main {
     public static void main(String[] args) { 
         
@@ -51,7 +47,7 @@ public class main {
         }
         
         //print out how many nodes the producer created in the heap.
-        System.out.println(String.format("Producer created %d nodes in the heap.", pt1.getNodeCount()));
+        System.out.println(String.format("Producer created %d nodes in the heap.", pt1.getTotalNodeCount()));
         
         //print out how many nodes are remaining in the heap. 
         System.out.println(String.format("Producer thinks there are %d nodes remaining...", heap.size()));

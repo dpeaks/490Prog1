@@ -1,12 +1,13 @@
 package program1;
 
 /*
- * Class producerThread that produces nodes for the consumer threads to consume.
+ * Class producerThread produces nodes for the consumer threads to consume.
+ * @author Dante
  */
 public class producerThread implements Runnable {
 
-    // the amount of time a process is idle
-    private final long idleWait = 33;
+    // the amount of time a process is rest
+    private final long restTime = 33;
 
     // maximum number of nodes to produce
     private final int maxNodes = 75;
@@ -14,110 +15,133 @@ public class producerThread implements Runnable {
     // total amount of nodes created
     private int totalNodesCreated;
 
-    // counter for how many times a process has been awaken
-    private int wakeCount;
-
     // heap for processes/ nodes to get arranged into
     private minHeap minHeap;
 
-    // 
+    // indicates wether or not all the processes have been produced.
     private ThreadFlags flags;
 
-    //producerThread sets the minHeap and the ThreadFlags
+    /**
+     * Initialize process producer.
+     * @param heap the heap that the producer will produce to.
+     * @param TF is the producer done producing? (T/F)
+     */
     public producerThread (minHeap heap, ThreadFlags TF) 
     {
-            this.minHeap = heap;
-            this.flags = TF;
-
-            this.wakeCount = 0;
-            this.totalNodesCreated = 0;
+        this.minHeap = heap;
+        this.flags = TF;
+        this.totalNodesCreated = 0;
     }
 
-    //gets the thread flags
-    public ThreadFlags getFlags () {
-            return flags;
-    }
-
-    //gets the current node count
-    public int getNodeCount () {
-            return totalNodesCreated;
-    }
-
-    //returns the wake up count
-    public int getWake () {
-            return wakeCount;
-    }
-
-    //creates an instance of a Node 
-    public Node createNode () {
-            Node node = new Node(getRandomNumber(1, 5), getRandomNumber(10, 30));
-            totalNodesCreated++;
-            node.setProcessID(totalNodesCreated);
-            return node;
-    }
-
-    //determines whether or not the producer is finished creating nodes
-    public boolean isFinished() {
-            return this.totalNodesCreated >= this.maxNodes;
-    }
-
-    //gets the remaining nodes in the heap
-    private int getRemainingNodes() {
-            return this.maxNodes - this.totalNodesCreated;
-    }
-
-    public static int getRandomNumber(int min, int max) {
-            return (int)(Math.random() * (max - min) + min);
+    /**
+     * Return the status of the producerComplete flag
+     * @return true if producer has completed, false otherwise
+     */
+    public boolean getFlags () {
+        return flags.isProducerComplete();
     }
     
-    //generate a random number of notes for the producer to create
+    /**
+     * Set the producer completeFlag
+     * @param flag true if producer has completed, false otherwise
+     */
+    public void setFlags(boolean flag) {
+        this.flags.setProducerComplete(flag);
+    }
+
+    /**
+     * Return the count of processes created.
+     * @return the amount of created processes
+     */
+    public int getTotalNodeCount () {
+        return totalNodesCreated;
+    }
+
+    /**
+     * Produce a random number.
+     * @param min lower bound.
+     * @param max upper bound
+     * @return a random number between the min and max
+     */
+    public static int getRandomNumber(int min, int max) {
+        return (int)(Math.random() * (max - min) + min);
+    }
+    
+    /** 
+     * Creates an instance of a Node
+     * @return 
+     */
+    public Node createNode () {
+        Node node = new Node(getRandomNumber(1, 5), getRandomNumber(10, 30));
+        totalNodesCreated++;
+        node.setProcessID(totalNodesCreated);
+        return node;
+    }
+
+    /**
+     * Return if the producer is finished producing the max amount of nodes.
+     * @return true if the max number of nodes has been created. False otherwise
+     */
+    public boolean isFinished() {
+        return this.totalNodesCreated >= this.maxNodes;
+    }
+
+    /**
+     * Calculate the remaining amount of nodes.
+     * @return the amount of processes left to be created
+     */
+    private int getRemainingNodes() {
+        return this.maxNodes - this.totalNodesCreated;
+    }
+    
+    /**
+     * Generate a random number of nodes for the producer to create. 
+     */
+    
     private int getRandomNodes () {
-            int possibility = getRandomNumber(8, this.maxNodes / 4 );
-            int nodesRemaining = getRemainingNodes(); 
-            if (possibility > nodesRemaining) {
-                possibility = nodesRemaining;
-            }
-            return possibility;
+        int choice = getRandomNumber(8, this.maxNodes );
+        int nodesRemaining = getRemainingNodes(); 
+        if (choice > nodesRemaining) {
+            choice = nodesRemaining;
+        }
+        return choice;
     }
 
-    //makes the thread wait for the given time in miliseconds
-    private void idle() 
+    /**
+     * Make the producer rest for the specified amount of time.
+     */
+    private void rest() 
     {
-            try 
-            {
-                    Thread.sleep(idleWait);
-            } catch(InterruptedException e) 
-            {
-                    System.out.println( "Error: Producer was interrupted." );
-            }
+        try{
+            Thread.sleep(restTime);
+        } catch(InterruptedException e){
+            System.out.println( "ERROR: Producer interrupted." );
+        }
     }
 
-    //add nodes to heap as it runs
+    /**
+     * Add nodes to the heap.
+     */
     @Override
     public void run() {
 
-            //run the function until the Producer is finished creating nodes
-            while (!isFinished()) 
-            {
-                    //set the number of nodes to produce to random
-                    int nodeToAdd = getRandomNodes();
-                    for (int i = 0; i < nodeToAdd; i++) {
-                            Node producedNode = createNode();
-                            this.minHeap.add( producedNode );
-                    }
+        while (!isFinished()) 
+        {
+                int nodesToAdd = getRandomNodes();
+                
+                // add the processes to the heap
+                for (int i = 0; i < nodesToAdd; i++) {
+                        Node producedNode = createNode();
+                        this.minHeap.add( producedNode );
+                }
 
-                    //prints out information related to the producer thread 
-                    //such as how many nodes it's produced during the current cycle 
-                    //as well as whether or not the thread is in an idle state
-                    System.out.println(String.format("Producer has produced ~%d new nodes.", nodeToAdd));
-                    System.out.println("Producer is idling...");
-                    idle();
-            }
+                System.out.println(String.format("Producer has produced %d new nodes.", nodesToAdd));
+                System.out.println("Idling...");
+                rest();
+        }
 
-            //prints out that the producer has completed work on the heap (producing nodes)
-            System.out.println("Producer has completed its tasks.");
+        System.out.println("Producer has completed its tasks...");
 
-            //set producer complete flag
-            flags.setProducerComplete(true);
+        setFlags(true);
     }
 }

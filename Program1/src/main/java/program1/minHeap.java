@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 /*
 /Class minHeap handles the priority queue of processes
+* @author Dante
 */
 public class minHeap {
 
@@ -102,7 +103,7 @@ public class minHeap {
      * @return
      * @throws InterruptedException 
      */
-    public Node removeHead () throws InterruptedException {
+    public Node consumeHead () throws InterruptedException {
             //protects critical region from being accessed by multiple processes
             synchronized ( this.lock ) {
                     Node head = this.nodes.remove(0);
