@@ -8,27 +8,38 @@ package program1;
 import java.time.LocalDateTime;
 
 /**
- *
+ * Class Node holds all the information about a process/node and executes them.
  * @author Dante
  */
 class Node implements Comparable {
     
-    //integer processID to store the specific Node's processID
+    // Process identifier
     private int processID;
     
-    //integer priority to store the specific Node's priority
+    // Priority of a process
     private int priority;
     
-    //integer timeSlice to store the time slice (or run time) of a Node
+    // Execution time of a process
     private int timeSlice;
     
-    //delcaring LocalDateTime as nodeStart to store the local time of a processes' start time
+    // Time that a process was started
     private LocalDateTime nodeStart;
     
-    //integer to store the Node's previous ID
-    private int prevID = 0; 
+    /**
+     * Initialize a node.
+     * @param priority the priority of a process
+     * @param timeSlice the amount fo time it takes for a process to execute
+     */
+    public Node(int priority, int timeSlice) {
+        this.processID++;
+        this.priority = priority; 
+        this.timeSlice = timeSlice;
+    }
     
-    //getting the processID
+    /** 
+     * Return the process ID of a process
+     * @return process ID
+     */
     public int getProcessID() {
         return processID;
     }
@@ -42,69 +53,77 @@ class Node implements Comparable {
     }
     
     
-    //getting the priority of a process
+    /**
+     * Return the priority of a process
+     * @return a process's priority
+     */
     public int getPriority() {
         return priority;
     }
     
-    //setting the priority of a process
+    /**
+     * Set the priority of a process.
+     * @param priority the priority to set this process to.
+     */
     public void setPriority(int priority) { 
         this.priority = priority;
     }
     
-    //getting the time slice (or run time) of a process
+    /**
+     * Returns the amount of time to execute a process.
+     * @return the amount of time to execute a process
+     */
     public int getTime() {
         return timeSlice;
     }
     
-    //setting the time of a process
+    /**
+     * Set the amount of time for a node to execute.
+     * @param timeSlice the amount of time to execute a process
+     */
     public void setTime(int timeSlice) { 
         this.timeSlice = timeSlice;
     }
     
-    //getting the current local time of the start of a process
+    /**
+     * Returns the start time of a process.
+     * @return the start time of a process
+     */
     public LocalDateTime getStart() { 
         return nodeStart;
     }
     
-    //setting the current local time of the start of a process
+    /**
+     * Sets the the start time of a process
+     * @param nodeStart the start time of a process
+     */
     public void setStart(LocalDateTime nodeStart) {
         this.nodeStart = nodeStart;
     }
     
-    //displaying and formatting a string containing information about a process
-    public String toString() {
-        //return processID + "\t" + priority + "\t" + run_time;
-        //SimpleDateFormat sf = new SimpleDateFormat("hh:mm:ss a zzz"); 
-        return String.format("Process: %d with priority %d (start %s)", this.getProcessID(), this.getPriority(), TimeFormat.formatDateTime(this.getStart()));
-   
+    /**
+     * Report information about a process.
+     * @return string containing process information
+     */
+    public String nodeReport() {
+        return String.format("Process: %d with priority %d (start %s)", this.getProcessID(), this.getPriority(), Time.formatDateTime(this.getStart()));
     }
     
-    /*
-    /Function Node:
-    /stores the timeSlice, priority, and processID of a Node
-    */
-    public Node(int priority, int timeSlice) {
-        this.processID++;
-        this.priority = priority; 
-        this.timeSlice = timeSlice;
-    }
-    
-    /*
-    /Function run: 
-    /throws InterruptedException
-    /sets the start time of a process
-    /tells the node to sleep for their run time
-    */
+    /**
+     * Execute a process by inducing its wait time.
+     * @throws InterruptedException 
+     */
     public void run() throws InterruptedException {
-        this.setStart(TimeFormat.getCurrentTime());
+        this.setStart(Time.getCurrentTime());
         Thread.sleep(this.timeSlice);
     
     }
     
-    /*
-    /compareTo: used to compare Nodes in the minHeap
-    */
+    /**
+     * Compare the priority of two nodes in a heap.
+     * @param o 
+     * @return 
+     */
     public int compareTo(Object o) {
        //@Override
         if(o instanceof Node) { 

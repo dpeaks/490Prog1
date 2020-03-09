@@ -3,9 +3,8 @@ package program1;
 import java.time.LocalDateTime;
 
 /*
- * Class consumerThread: 
- * consumes tasks and allows them to execute; requests nodes from the heap and simulates their execution 
- * also reports statistics on the process 
+ * Class consumerThread consumes processes/nodes and allows them to execute.
+ * @author Dante 
  */
 public class consumerThread implements Runnable {
 
@@ -13,7 +12,7 @@ public class consumerThread implements Runnable {
     private final int idleWait = 66;
 
     // count of consumed processes
-    private int totalConsumed;
+    private int consumedNodes;
 
     // Heap that stores processes
     private minHeap minHeap;
@@ -27,43 +26,52 @@ public class consumerThread implements Runnable {
     //consumer thread's ID
     private int consumerID;
 
-    //True if consumer thread is still able to continue consuming
+    //True if consumer thread is able to continue consuming
     private boolean isRunning;
 
     // used for indention of output
-    private String tabsPrepend;
+    private String tab;
 
-    //
+    /**
+     * Initialize consumer thread instance and set identation.
+     * @param heap the heap that the producer consumes from.
+     * @param TF true if the producer is done producing. False otherwise
+     */
     public consumerThread (minHeap heap, ThreadFlags TF) {
 
             this.minHeap = heap;
             this.consumerID = ++ lastId;
             this.flags = TF;
-            this.totalConsumed = 0;
+            this.consumedNodes = 0;
             this.isRunning = false;
 
-            //to make tabbing outputs easier
             StringBuilder sb = new StringBuilder();
             for ( int i = 0; i < this.consumerID; i++ ) {
                     sb.append( '\t' );
             }
 
-            this.tabsPrepend = sb.toString();
+            this.tab = sb.toString();
     }
 
-    //returns the consumerID of the current consumer thread
+    /**
+     * Return the ID of a consumer.
+     * @return the ID of a consumer
+     */
     public int getConsumerID () {
             return consumerID;
         }
 
-    //returns the total consumed nodes by the current consumer threads
+    /**
+     * Returns the amount of processes/nodes consumed.
+     * @return the amount of nodes/processes consumed
+     */
     public int getTotalConsumed () {
-            return totalConsumed;
+            return consumedNodes;
         }
 
     //function to handle reports on consumer thread statuses
     private void report (String message) {
-            System.out.println( String.format("%sConsumer %d %s", this.tabsPrepend, this.getConsumerID(), message));
+            System.out.println(String.format("%sConsumer %d %s", this.tab, this.getConsumerID(), message));
     }
 
     //tells the consumer to wait for the specified idleWait time
@@ -123,12 +131,12 @@ public class consumerThread implements Runnable {
                             }
                             nodeToProcess.run();
 
-                            LocalDateTime finishedProcessingTime = TimeFormat.getCurrentTime();
+                            LocalDateTime finishedProcessingTime = Time.getCurrentTime();
 
                             String nodeStatistics = nodeToProcess.toString();
 
-                            report(String.format("finished %s at %s", nodeStatistics, TimeFormat.formatDateTime(finishedProcessingTime)));
-                            this.totalConsumed++;
+                            report(String.format("finished %s at %s", nodeStatistics, Time.formatDateTime(finishedProcessingTime)));
+                            this.consumedNodes++;
 
                     } 
                     catch ( InterruptedException ex ) 
@@ -138,6 +146,6 @@ public class consumerThread implements Runnable {
             }
 
             report("is done."); 
-            report(String.format("consumed %d nodes.", this.totalConsumed));
+            report(String.format("consumed %d nodes.", this.consumedNodes));
     }
 }
