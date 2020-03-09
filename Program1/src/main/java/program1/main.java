@@ -5,8 +5,8 @@ package program1;
 public class main {
     public static void main(String[] args) { 
         
-        //creating new heap
-        minHeap heap = new minHeap(75);
+        //create new
+        minHeap heap = new minHeap(100);
         
         //creating instance of flag watcher
         ProducerFlag flags = new ProducerFlag(); 
@@ -41,11 +41,6 @@ public class main {
         catch (InterruptedException ex) { 
             System.out.println("Error: Threads were interrupted."); 
         }
-        
-        //print out how many nodes the producer created in the heap.
-        System.out.println(String.format("Producer created %d nodes in the heap.", pt1.getTotalNodeCount()));
-        
-        //print out how many nodes are remaining in the heap. 
-        System.out.println(String.format("Producer thinks there are %d nodes remaining...", heap.size()));
-        }
+
     }
+}

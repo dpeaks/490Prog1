@@ -10,7 +10,7 @@ public class ProducerThread implements Runnable {
     private final long restTime = 33;
 
     // maximum number of nodes to produce
-    private final int maxNodes = 75;
+    private final int maxNodes = 100;
 
     // total amount of nodes created
     private int totalNodesCreated;
@@ -19,7 +19,7 @@ public class ProducerThread implements Runnable {
     private minHeap minHeap;
 
     // indicates wether or not all the processes have been produced.
-    private ProducerFlag flags;
+    private ProducerFlag producerFlag;
 
     /**
      * Initialize process producer.
@@ -29,7 +29,7 @@ public class ProducerThread implements Runnable {
     public ProducerThread (minHeap heap, ProducerFlag TF) 
     {
         this.minHeap = heap;
-        this.flags = TF;
+        this.producerFlag = TF;
         this.totalNodesCreated = 0;
     }
 
@@ -38,7 +38,7 @@ public class ProducerThread implements Runnable {
      * @return true if producer has completed, false otherwise
      */
     public boolean getFlags () {
-        return flags.isProducerComplete();
+        return producerFlag.isProducerComplete();
     }
     
     /**
@@ -46,7 +46,7 @@ public class ProducerThread implements Runnable {
      * @param flag true if producer has completed, false otherwise
      */
     public void setFlags(boolean flag) {
-        this.flags.setProducerComplete(flag);
+        this.producerFlag.setProducerComplete(flag);
     }
 
     /**

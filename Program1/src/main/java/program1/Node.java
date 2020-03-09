@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 class Node implements Comparable {
     
     // Process identifier
-    private int processID;
+    private int procID;
     
     // Priority of a process
     private int priority;
     
     // Execution time of a process
-    private int timeSlice;
+    private int execTime;
     
     // Time that a process was started
     private LocalDateTime nodeStart;
@@ -31,9 +31,9 @@ class Node implements Comparable {
      * @param timeSlice the amount fo time it takes for a process to execute
      */
     public Node(int priority, int timeSlice) {
-        this.processID++;
+        this.procID++;
         this.priority = priority; 
-        this.timeSlice = timeSlice;
+        this.execTime = timeSlice;
     }
     
     /** 
@@ -41,7 +41,7 @@ class Node implements Comparable {
      * @return process ID
      */
     public int getProcessID() {
-        return processID;
+        return procID;
     }
     
     /**
@@ -49,7 +49,7 @@ class Node implements Comparable {
      * @param idNum the id that a process will have
      */
     public void setProcessID(int idNum) {
-        this.processID = idNum;
+        this.procID = idNum;
     }
     
     
@@ -74,7 +74,7 @@ class Node implements Comparable {
      * @return the amount of time to execute a process
      */
     public int getTime() {
-        return timeSlice;
+        return execTime;
     }
     
     /**
@@ -82,7 +82,7 @@ class Node implements Comparable {
      * @param timeSlice the amount of time to execute a process
      */
     public void setTime(int timeSlice) { 
-        this.timeSlice = timeSlice;
+        this.execTime = timeSlice;
     }
     
     /**
@@ -115,7 +115,7 @@ class Node implements Comparable {
      */
     public void run() throws InterruptedException {
         this.setStart(Time.getCurrentTime());
-        Thread.sleep(this.timeSlice);
+        Thread.sleep(this.execTime);
     
     }
     

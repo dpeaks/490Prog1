@@ -18,7 +18,7 @@ public class ConsumerThread implements Runnable {
     private minHeap minHeap;
 
     // Signals if there are any more processes to consume
-    private ProducerFlag flags;
+    private ProducerFlag producerFlag;
 
     //consumerID of the previous consumer thread
     private static int lastId = 0;
@@ -41,7 +41,7 @@ public class ConsumerThread implements Runnable {
 
             this.minHeap = heap;
             this.consumerID = ++ lastId;
-            this.flags = TF;
+            this.producerFlag = TF;
             this.consumedNodes = 0;
             this.isRunning = false;
 
@@ -116,7 +116,7 @@ public class ConsumerThread implements Runnable {
 
                 report( "cannot find new node." );
 
-                if (flags.isProducerComplete()) {
+                if (producerFlag.isProducerComplete()) {
                     report("thinks there aren't any nodes left on the heap.");
                     this.isRunning = false; 
                     return null; 
