@@ -1,50 +1,16 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package program1;
 
-//import java.text.SimpleDateFormat;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 
-/*
-/Class ThreadFlags will handle communication between 
-/the producer and consumer threads.
-*/
-class ThreadFlags {
-  
-        //boolean to set the producer as done with its tasks
-        private boolean producerComplete; 
-
-        public ThreadFlags() 
-        {
-            this.producerComplete = false; 
-        }
-
-        public boolean isProducerComplete() {
-           return producerComplete;
-        }
-        
-        //updates flag when the producer is done 
-        public synchronized void setProducerComplete (boolean producerComplete) {
-            this.producerComplete = producerComplete;
-        }
-
-    } 
-
-/*
-/Class RandomNumber
-*/
-class RandomNumber {
-    //generating a random number to use in node creation 
-    public static int getRandomNumber(int min, int max) {
-            return (int)(Math.random() * (max - min) + min);
-    }
-}
-
-
-/*
-/Class Node will handle properties related to a Node/Process creation 
-/as well as forthe individual properties of nodes
-*/
+/**
+ *
+ * @author Dante
+ */
 class Node implements Comparable {
     
     //integer processID to store the specific Node's processID
@@ -63,9 +29,18 @@ class Node implements Comparable {
     private int prevID = 0; 
     
     //getting the processID
-    public int getprocessID() {
+    public int getProcessID() {
         return processID;
     }
+    
+    /**
+     * Set the process ID.
+     * @param idNum the id that a process will have
+     */
+    public void setProcessID(int idNum) {
+        this.processID = idNum;
+    }
+    
     
     //getting the priority of a process
     public int getPriority() {
@@ -101,7 +76,7 @@ class Node implements Comparable {
     public String toString() {
         //return processID + "\t" + priority + "\t" + run_time;
         //SimpleDateFormat sf = new SimpleDateFormat("hh:mm:ss a zzz"); 
-        return String.format("Process: %d with priority %d (start %s)", this.getprocessID(), this.getPriority(), TimeFormat.formatDateTime(this.getStart()));
+        return String.format("Process: %d with priority %d (start %s)", this.getProcessID(), this.getPriority(), TimeFormat.formatDateTime(this.getStart()));
    
     }
     
@@ -110,7 +85,7 @@ class Node implements Comparable {
     /stores the timeSlice, priority, and processID of a Node
     */
     public Node(int priority, int timeSlice) {
-        this.processID = ++ prevID;
+        this.processID++;
         this.priority = priority; 
         this.timeSlice = timeSlice;
     }
@@ -122,7 +97,7 @@ class Node implements Comparable {
     /tells the node to sleep for their run time
     */
     public void run() throws InterruptedException {
-        this.setStart(CurrentTime.getCurrentTime());
+        this.setStart(TimeFormat.getCurrentTime());
         Thread.sleep(this.timeSlice);
     
     }
@@ -139,32 +114,3 @@ class Node implements Comparable {
         return - 1; 
     }
 }
- 
-/*
-/Class TimeFormat sets the time/date format
-*/
-class TimeFormat {
-
-    public static String formatDateTime(LocalDateTime dateTime) {
-        //hh:mm:ss a zzz
-        return dateTime.format(DateTimeFormatter.ofPattern( "hh:mm:ss:nnnnnnnnnnnnnnn"));
-    }
-}
-
-/*
-/Class CurrentTime gets the current local date and time from the computer
-*/ 
-class CurrentTime {
-    public static LocalDateTime getCurrentTime() {
-        return LocalDateTime.now();
-    }
-}
-
-/*
-/Class CurrentTimeFormatted formats the current local date and time from the computer
-*/
-class CurrentTimeFormatted {
-    public static String getCurrentTimeFormatted() {
-        return TimeFormat.formatDateTime(CurrentTime.getCurrentTime());
-    }
-} 

@@ -1,5 +1,0 @@
-ProcessID 	EndTime 	Priority 	Runtime
-Process1	5			12			10		
-Process2	2			7			13	
-Process3	7			8			23
-Process4	9			10			13
